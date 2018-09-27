@@ -7,7 +7,8 @@ root = os.path.dirname(os.path.abspath(__file__))
 db_dir_path = os.path.join(root, 'database')
 db_json_path = os.path.join(db_dir_path, 'database.json')
 proj_dir_path = os.path.join(db_dir_path, 'projects')
-
+ROOT = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_DB_PATH = os.path.join(root, 'database')
 
 
 
@@ -226,3 +227,133 @@ def append_2dplot_val(proj_name: str, task_name: str, rst_name: str, val: list
     :return:
     """
     pass
+
+
+class Project(object):
+    def __init__(self,
+                 name: str,
+                 desc: str = '',
+                 tasks: list = None,
+                 archived: bool = False,
+                 create_time: int = -1,
+                 db = None
+                 ):
+        self.name = name
+        self.desc = desc
+        self.tasks = tasks if tasks else []
+        self.archived = archived
+        self.create_time = int(time.time()) if create_time == -1 else create_time
+        self.metadata = {}
+        self.db = db
+
+    def has_task(self, name: str) -> bool:
+        pass
+
+    def create(self):
+        assert self.db is not None
+        proj_path = os.path.join(self.db.proj_dir_path, self.name)
+        metadata_path = os.path.join(proj_path, 'metadata.json')
+        # Make project directory
+        os.mkdir(proj_path)
+        # Create metadata.json
+        metadata = {
+            'name': self.name,
+            'desc': self.desc,
+            'tasks': self.tasks,
+            'archived': self.archived,
+            'create_time': self.create_time
+        }
+        json.dump(metadata, open(metadata_path, 'w', encoding='utf-8'))
+
+
+class Database(object):
+    def __init__(self, path: str = DEFAULT_DB_PATH):
+        self.path = path
+        self.proj_dir_path = os.path.join(path, 'projects')
+        self.db_metadata_path = os.path.join(path, 'metadata.json')
+        self.metadata = self.read_metadata()
+
+    def read_metadata(self):
+        return json.load(open(self.db_metadata_path, 'r', encoding='utf-8'))
+
+    def save_metadata(self):
+        json.dump(self.metadata, open(self.db_metadata_path, 'w', encoding='utf-8'))
+
+    def add_metadata(self, key: str, val):
+        """Add a key-value pair to the metadata.
+        Existing value will be overwritten.
+        :param key: Key to add.
+        :param val: Value to add.
+        """
+        self.metadata[key] = val
+        self.save_metadata()
+
+    def delete_metadata(self, key: str):
+        """Remove a key-value pair from the metadata.
+        A KeyError will be raised if the key does not exist.
+        """
+        val = self.metadata.pop(key)
+        self.save_metadata()
+        return val
+
+    def append_metadata_item(self, key: str, item: str):
+        """Append a value to a list type metadata value.
+        :param key: Metadata key.
+        :param item: Item to append.
+        """
+        if key in self.metadata:
+            if type(self.metadata[key]) is list:
+                self.metadata[key].append(item)
+                self.save_metadata()
+            else:
+                raise TypeError('{} is not a list type value'.format(key))
+        else:
+            self.metadata[key] = [item]
+            self.save_metadata()
+
+    def remove_metadata_item(self, key: str, item: str):
+        """Remove a value from a list type metadata value.
+        :param key: Metadata key.
+        :param item: Item to remove.
+        """
+        if key in self.metadata:
+            if type(self.metadata[key]) is list:
+                self.metadata[key].remove(item)
+                self.save_metadata()
+            else:
+                raise TypeError('{} is not a list type value'.format(key))
+        else:
+            raise KeyError('{} does not exist')
+
+    def has_project(self, name: str) -> bool:
+        """Check if a project exists by name.
+        :param name: Project name.
+        """
+        proj_path = os.path.join(self.proj_dir_path, name)
+        return os.path.exists(proj_path) and os.path.isdir(proj_path)
+
+    def create_project(self, name: str, desc: str = '') -> Project:
+        """Create a project.
+        :param name: Project name.
+        :param desc: Project description.
+        """
+        if self.has_project(name):
+            raise ValueError('project {} exists'.format(name))
+
+        proj = Project(name, desc)
+        proj.create()
+        self.add_metadata('projects', name)
+
+        return proj
+
+    def delete_project(self, name: str):
+        if self.has_project(name):
+           shutil.rmtree(os.path.join(self.proj_dir_path, name))
+           self.remove_metadata_item('projects', name)
+        else:
+            raise ValueError('project {} does not exists'.format(name))
+
+
+
+
+

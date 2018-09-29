@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Footprint{% endblock %}
+{% block header %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}"/>
+{% endblock %}
+
+{% block body %}
+    {{ super() }}
+    <div id="main">
+        <div id="bn-wrapper">
+            <div id="bn-title">Foot<b>print</b></div>
+            <nav>
+                <ul id="bn-nav-ul">
+                    <li class="bn-nav-li current">Projects</li>
+                    <li class="bn-nav-li">Settings</li>
+                </ul>
+            </nav>
+        </div>
+        <div id="doc">{% block doc %}{% endblock %}</div>
+    </div>
+{% endblock %}

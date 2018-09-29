@@ -15,6 +15,7 @@ root = os.path.dirname(os.path.abspath(__file__))
 # ROOT = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_DB_PATH = os.path.join(root, 'database')
 
+boolean = lambda x : x.lower() == 'true'
 
 def validate_name(name: str) -> bool:
     return re.match('^[0-9a-zA-Z_-]{2,50}$', name) is not None
@@ -121,7 +122,7 @@ class Task(Container):
 
     def create_subtask(self, name: str):
         if self.has_subtask(name):
-            raise ValueError('Subtask {} already exists')
+            raise ValueError('Subtask {} already exists'.format(name))
         if not validate_name(name):
             raise ValueError('Invalid task name')
 
@@ -137,16 +138,31 @@ class Task(Container):
             shutil.rmtree(os.path.join(self.path, 'subtasks', name))
             self.remove_metadata_item('subtasks', name)
         else:
-            raise ValueError('Subtask {} does not exists')
+            raise ValueError('Subtask {} does not exists'.format(name))
+
+    def get_subtask(self, name: str):
+        if self.has_subtask(name):
+            return Task(name, path=os.path.join(self.path, 'subtasks', name))
+        else:
+            raise ValueError('Subtask {} does not exists'.format(name))
 
     def create_child(self, name: str):
         return self.create_subtask(name)
 
-    def delete_child(self, name):
+    def delete_child(self, name: str):
         return self.delete_child(name)
 
-    def has_child(self, name):
+    def has_child(self, name: str):
         return self.has_subtask(name)
+
+    def get_child(self, name: str):
+        return self.get_subtask(name)
+
+    def list_children(self, info: bool = False):
+        tasks = self.metadata.get('subtasks', [])
+        if info:
+            tasks = [self.get_child(task).metadata for task in tasks]
+        return tasks
 
 
 class Project(Container):
@@ -178,7 +194,7 @@ class Project(Container):
 
     def create_task(self, name: str):
         if self.has_task(name):
-            raise ValueError('Task {} already exists')
+            raise ValueError('Task {} already exists'.format(name))
         if not validate_name(name):
             raise ValueError('Invalid task name')
 
@@ -194,7 +210,7 @@ class Project(Container):
             shutil.rmtree(os.path.join(self.path, 'tasks', name))
             self.remove_metadata_item('tasks', name)
         else:
-            raise ValueError('Task {} does not exists')
+            raise ValueError('Task {} does not exists'.format(name))
 
     def get_task(self, name: str):
         if self.has_task(name):
@@ -214,6 +230,12 @@ class Project(Container):
     def get_child(self, name: str):
         return self.get_task(name)
 
+    def list_children(self, info: bool = False):
+        tasks = self.metadata.get('tasks', [])
+        if info:
+            tasks = [self.get_child(task).metadata for task in tasks]
+        return tasks
+
 
 class Database(Container):
     def __init__(self, path: str = DEFAULT_DB_PATH):
@@ -228,9 +250,16 @@ class Database(Container):
             self.initialize_database()
 
         self.ops = {
-            'create_project': (self.create_project, ['name']),
-            'delete_project': (self.delete_project, ['name']),
-            'create_task': (self.create_task, ['parent', 'name'])
+            'create_project': (self.create_project,
+                               [('name', str, None)]),
+            'delete_project': (self.delete_project,
+                               [('name', str, None)]),
+            'list_projects': (self.list_projects,
+                              [('info', boolean, False)]),
+            'list_children': (self.list_children,
+                              [('parent', str, None), ('info', boolean, False)]),
+            'create_task': (self.create_task,
+                            [('parent', str, None), ('name', str, None)]),
         }
 
     def initialize_database(self):
@@ -281,12 +310,22 @@ class Database(Container):
         else:
             raise ValueError('Project {} does not exist'.format(name))
 
+    def list_projects(self, info: bool = False):
+        projs = self.metadata.get('projects', [])
+        if info:
+            projs = {self.get_project(proj).metadata for proj in projs}
+        return projs
+
+    def list_children(self, parent, info: bool = False):
+        parent = self.get_child(parent)
+        return parent.list_children(info=info)
+
     def get_child(self, name: str):
         if '/' not in name:
             if self.has_project(name):
                 return self.get_project(name)
             else:
-                raise ValueError('Project {} does not exist')
+                raise ValueError('Project {} does not exist'.format(name))
         else:
             name = name.split('/')
             current = self.get_project(name[0])
@@ -303,9 +342,14 @@ class Database(Container):
         try:
             if op in self.ops:
                 op_func, op_args = self.ops[op]
-                args = {arg: args[arg] for arg in op_args}
-                op_func(**args)
-                return True, 'Success'
+                args_ = {}
+                for arg, arg_type, arg_default in op_args:
+                    val = args.get(arg, arg_default)
+                    if val is not None:
+                        val = arg_type(val)
+                    args_[arg] = val
+                rst = op_func(**args_)
+                return True, rst
             else:
                 return False, 'Unknown operation: {}'.format(op)
         except Exception as e:

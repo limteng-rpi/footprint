@@ -1,0 +1,61 @@
+body, html {
+    font-family: 'Open Sans', "Helvetica Neue", sans-serif;
+}
+
+#bn-wrapper {
+    position: fixed;
+    border-bottom: 1px solid #e2e2e2;
+    top: 0;
+    /*height: 50px;*/
+    width: 100%;
+    background-color: rgba(255,255,255,.6);
+    backdrop-filter: blur(12px) saturate(180%);
+    z-index: 9999;
+}
+
+#bn-title {
+    padding: 15px 0;
+    width: 100%;
+    font-size: 14px;
+    font-weight: 300;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: .3em;
+    color: #8114ab;
+}
+
+#bn-title > b {
+    font-weight: 600;
+}
+
+#bn-nav-ul {
+    display: block;
+    position: relative;
+    list-style: none;
+    padding: 3px 0;
+    margin: 0;
+    text-align: center;
+    background-color: rgba(0,0,0,.02);
+}
+
+.bn-nav-li {
+    display: inline-block;
+    margin: auto 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #555;
+    cursor: pointer;
+}
+
+.bn-nav-li.current {
+    font-weight: 600;
+}
+
+.bn-nav-li:hover {
+    color: #222;
+}
+
+#doc {
+    padding-top: 100px;
+}

@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from argparse import ArgumentParser
 from database import Database, Project, Task, Config, Result
 
@@ -9,12 +9,23 @@ logger = logging.getLogger()
 
 cur_dir = os.path.dirname(__file__)
 
+# Parse command line arguments
 parser = ArgumentParser()
+parser.add_argument('--localhost', action='store_true')
+parser.add_argument('--host', default=None)
+parser.add_argument('--port', default=8000, type=int)
 parser.add_argument('--dbpath', default=os.path.join(cur_dir, 'database'),
                     help='Path to the database')
 args = parser.parse_args()
 
 db = Database(args.dbpath)
+
+# IP address
+host = '0.0.0.0'
+if args.host:
+    host = args.host
+elif args.localhost:
+    host = '127.0.0.1'
 
 app = Flask(__name__)
 
@@ -30,14 +41,20 @@ def home():
 def setting():
     pass
 
+@app.route('/projects')
+def projects():
+    return render_template('proj_view.html')
+
 
 @app.route('/api/<op>', methods=['GET', 'POST'])
 def api(op):
     args = request.values
-    print(args.to_dict())
     success, msg = db.api(op, args)
-    return jsonify({'msg': msg}), 200 if success else 500
+    if success:
+        return jsonify({'data': msg}), 200
+    else:
+        return jsonify({'msg': msg}), 500
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host=host, port=args.port, debug=True, threaded=False)

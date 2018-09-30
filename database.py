@@ -371,18 +371,18 @@ class Database(Container):
             'create_task': (self.create_task,
                             [('parent', str, None), ('name', str, None)]),
             'insert_task_result': (self.insert_task_result,
-                                   [('parent', str, None), ('key', str, None),
+                                   [('identifier', str, None), ('key', str, None),
                                     ('value', str, None), ('val_type', str, None)]),
             'delete_task_result': (self.delete_task_result,
-                                   [('parent', str, None), ('key', str, None)]),
+                                   [('identifier', str, None), ('key', str, None)]),
             'insert_task_config': (self.insert_task_config,
-                                   [('parent', str, None), ('key', str, None),
+                                   [('identifier', str, None), ('key', str, None),
                                     ('value', str, None),
                                     ('val_type', str, None)]),
             'delete_task_config': (self.delete_task_config,
-                                   [('parent', str, None), ('key', str, None)]),
+                                   [('identifier', str, None), ('key', str, None)]),
             'append_task_result': (self.append_task_result,
-                                   [('parent', str, None), ('key', str, None),
+                                   [('identifier', str, None), ('key', str, None),
                                     ('value', str, None),
                                     ('val_type', str, None)]),
             'update_child_metadata': (self.update_child_metadata,
@@ -475,28 +475,28 @@ class Database(Container):
         parent = self.get_child(parent)
         parent.create_child(name)
 
-    def insert_task_result(self, parent: str, key: str, value: str,
+    def insert_task_result(self, identifier: str, key: str, value: str,
                            val_type: str):
-        parent = self.get_child(parent)
-        parent.insert_result(key, value, val_type)
+        node = self.get_child(identifier)
+        node.insert_result(key, value, val_type)
 
-    def delete_task_result(self, parent: str, key: str):
-        parent = self.get_child(parent)
-        parent.delete_result(key)
+    def delete_task_result(self, identifier: str, key: str):
+        node = self.get_child(identifier)
+        node.delete_result(key)
 
-    def append_task_result(self, parent: str, key: str, value: str,
+    def append_task_result(self, identifier: str, key: str, value: str,
                            val_type: str):
-        parent = self.get_child(parent)
-        parent.append_result(key, value, val_type)
+        node = self.get_child(identifier)
+        node.append_result(key, value, val_type)
 
-    def insert_task_config(self, parent: str, key: str, value: str,
+    def insert_task_config(self, identifier: str, key: str, value: str,
                            val_type: str):
-        parent = self.get_child(parent)
-        parent.insert_config(key, value, val_type)
+        node = self.get_child(identifier)
+        node.insert_config(key, value, val_type)
 
-    def delete_task_config(self, parent: str, key: str):
-        parent = self.get_child(parent)
-        parent.delete_config(key)
+    def delete_task_config(self, identifier: str, key: str):
+        node = self.get_child(identifier)
+        node.delete_config(key)
 
     def update_child_metadata(self, identifier: str, metadata: str):
         node = self.get_child(identifier)

@@ -37,6 +37,7 @@ function _handle_table_result(key, val) {
             }
             tr.append($('<td></td>').text(v));
         });
+        tbody.append(tr);
     });
 
     table.append(thead, tbody);

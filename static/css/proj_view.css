@@ -39,6 +39,11 @@
     padding: 5px 15px;
     width: 100%;
     vertical-align: center;
+    border-left: 2px solid transparent;
+}
+
+.proj-li:hover {
+    border-left: 2px solid #eee;
 }
 
 .proj-info {

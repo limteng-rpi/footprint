@@ -200,6 +200,7 @@ class Task(Container):
         task.add_metadata('name', name)
         task.add_metadata('identifier', '{}/{}'.format(
             self.metadata['identifier'], name))
+        task.add_metadata('create_time', int(time.time()))
         self.append_metadata_item('subtasks', name)
 
     def delete_subtask(self, name: str):
@@ -377,7 +378,10 @@ class Database(Container):
             'append_task_result': (self.append_task_result,
                                    [('parent', str, None), ('key', str, None),
                                     ('value', str, None),
-                                    ('val_type', str, None)])
+                                    ('val_type', str, None)]),
+            'update_child_metadata': (self.update_child_metadata,
+                                      [('identifier', str, None),
+                                       ('metadata', str, None)])
         }
 
     def initialize_database(self):
@@ -396,7 +400,7 @@ class Database(Container):
         """
         return name in self.metadata.get('projects', [])
 
-    def create_project(self, name: str) -> Project:
+    def create_project(self, name: str):
         """Create a project.
         :param name: Project name.
         :param desc: Project description.
@@ -411,9 +415,8 @@ class Database(Container):
         proj.create()
         proj.add_metadata('name', name)
         proj.add_metadata('identifier', name)
+        proj.add_metadata('create_time', int(time.time()))
         self.append_metadata_item('projects', name)
-
-        return proj
 
     def delete_project(self, name: str):
         if self.has_project(name):
@@ -479,6 +482,15 @@ class Database(Container):
         parent = self.get_child(parent)
         parent.delete_config(key)
 
+    def update_child_metadata(self, identifier: str, metadata: str):
+        node = self.get_child(identifier)
+        for k, v in json.loads(metadata):
+            node.add_metadata(k, v)
+
+    def update_metadata(self, metadata):
+        for k, v in json.loads(metadata):
+            self.add_metadata(k, v)
+
     def api(self, op, args):
         try:
             if op in self.ops:
@@ -486,7 +498,7 @@ class Database(Container):
                 args_ = {}
                 for arg, arg_type, arg_default in op_args:
                     val = args.get(arg, arg_default)
-                    if val is not None:
+                    if val is not None and arg_type is not None:
                         val = arg_type(val)
                     args_[arg] = val
                 rst = op_func(**args_)

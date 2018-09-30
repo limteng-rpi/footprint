@@ -1,0 +1,47 @@
+{% extends "base_ui.html" %}
+
+{% block title %}Footprint{% endblock %}
+{% block header %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/task_view.css') }}"/>
+    <script src="{{ url_for('static', filename='js/task_view.js') }}"></script>
+
+{% endblock %}
+
+{% block doc %}
+    {{ super() }}
+    <div id="tv-wrapper">
+        <div id="tv">
+            <div id="tv-toolbar">
+                <div id="tv-t-left">
+{#                    <span id="tv-toolbar-name">{{ metadata.name }}</span>#}
+                </div>
+                <div id="tv-t-right">
+                    <button class="trans red"><i class="far fa-circle"></i> Delete Task</button>
+                </div>
+            </div>
+            <div id="tv-metadata">
+                <table id="tv-metadata-table">
+                    <tbody>
+                        <tr>
+                            <td width="100">Name</td>
+                            <td>{{ metadata.name }}</td>
+                        </tr>
+                        <tr>
+                            <td>Status</td>
+                            <td>{{ metadata.status }}</td>
+                        </tr>
+                        <tr>
+                            <td>Description</td>
+                            <td>{{ metadata.desc }}</td>
+                        </tr>
+                        <tr>
+                            <td>Created at</td>
+                            <td>{{ metadata.create_time }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -28,6 +28,7 @@ elif args.localhost:
     host = '127.0.0.1'
 
 app = Flask(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
 
 # db.create_project('proj1')
 # db.get_project('proj1').create_task('task1')
@@ -57,4 +58,4 @@ def api(op):
 
 
 if __name__ == '__main__':
-    app.run(host=host, port=args.port, debug=True, threaded=False)
+    app.run(host=host, port=args.port, debug=True, threaded=True)

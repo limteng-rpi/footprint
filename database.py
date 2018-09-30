@@ -79,15 +79,83 @@ class Container(object):
             raise KeyError('{} does not exist')
 
 
-class Config(object):
+class Dict(object):
 
-    def __init__(self):
+    def __init__(self, path):
+        self.path = path
+        self.allowed_types = {}
+        self.formatters = {}
+        self.dictionary = {}
+
+    def load(self):
+        if os.path.exists(self.path):
+            self.dictionary = json.load(open(self.path, 'r', encoding='utf-8'))
+
+    def save(self):
+        json.dump(self.dictionary, open(self.path, 'w', encoding='utf-8'))
+
+    def insert(self, key, value, val_type='str'):
+        if val_type not in self.allowed_types:
+            raise ValueError('Unknown value type: {}'.format(val_type))
+        value = self.formatters[val_type](value)
+        self.dictionary[key] = {'value': value, 'type': val_type}
+        self.save()
+
+    def delete(self, key):
+        return self.dictionary.pop(key)
+
+    def get(self, key):
+        return self.dictionary.get(key)
+
+    def append(self, key, value, val_type):
+        raise NotImplementedError()
+
+
+class Result(Dict):
+    def __init__(self, path):
+        super().__init__(path)
+        self.allowed_types = {'str', 'int', 'float', 'list', 'file',
+                              'table', 'plot2d', 'html', 'json'}
+        self.formatters = {
+            'str': lambda x: x,
+            'file': lambda x: x,
+            'int': lambda x: int(x),
+            'float': lambda x: float(x),
+            'list': lambda x: json.loads(x),
+            'json': lambda x: json.loads(x),
+            'html': lambda x: x,
+            'table': lambda x: json.dumps({'cols': json.loads(x), 'data': []}),
+            'plot2d': lambda x: json.dumps({'series': json.loads(x), 'data': []})
+        }
+
+    def table_formatter(self, value: str):
+        return json.dumps({'cols': json.loads(value), 'rows': []})
+
+    def plot2d_formatter(self, value: str):
         pass
 
+    def append(self, key, value, val_type):
+        if val_type in {'table', 'plot2d'}:
+            self.dictionary[key]['value']['data'].append(json.loads(value))
+        else:
+            raise ValueError('Unknown value type: {}'.format(val_type))
+        self.save()
 
-class Result(object):
 
-    def __init__(self, name: str):
+class Config(Dict):
+    def __init__(self, path):
+        super().__init__(path)
+        self.allowed_types = {'str', 'int', 'float', 'file', 'list', 'json'}
+        self.formatters = {
+            'str': lambda x: x,
+            'file': lambda x: x,
+            'int': lambda x: int(x),
+            'float': lambda x: float(x),
+            'list': lambda x: json.loads(x),
+            'json': lambda x: json.loads(x),
+        }
+
+    def append(self, key, value, val_type):
         pass
 
 
@@ -103,6 +171,8 @@ class Task(Container):
         self.path = path
         self.metadata_path = os.path.join(path,
                                           'metadata.json') if path else None
+        self.config_path = os.path.join(path, 'config.json') if path else None
+        self.result_path = os.path.join(path, 'result.json') if path else None
         if metadata is None:
             if os.path.exists(self.metadata_path):
                 self.metadata = self.read_metadata()
@@ -110,7 +180,6 @@ class Task(Container):
                 self.metadata = {}
         else:
             self.metadata = metadata
-
 
     def has_subtask(self, name: str) -> bool:
         return name in self.metadata.get('subtasks', [])
@@ -145,6 +214,40 @@ class Task(Container):
             return Task(name, path=os.path.join(self.path, 'subtasks', name))
         else:
             raise ValueError('Subtask {} does not exists'.format(name))
+
+    def insert_result(self, key: str, value: str, val_type: str):
+        result = Result(self.result_path)
+        result.insert(key, value, val_type)
+
+    def delete_result(self, key: str):
+        result = Result(self.result_path)
+        result.delete(key)
+
+    def append_result(self, key: str, value: str, val_type: str):
+        result = Result(self.result_path)
+        result.append(key, value, val_type)
+
+    def get_result_value(self, key: str):
+        result = Result(self.result_path)
+        return result.get(key)
+
+    def get_result(self):
+        return Result(self.result_path).dictionary
+
+    def insert_config(self, key: str, value: str, val_type: str):
+        config = Config(self.config_path)
+        config.insert(key, value, val_type)
+
+    def delete_config(self, key: str):
+        config = Config(self.config_path)
+        config.delete(key)
+
+    def get_config(self):
+        return Config(self.config_path).dictionary
+
+    def get_config_value(self, key: str):
+        config = Config(self.config_path)
+        return config.get(key)
 
     def create_child(self, name: str):
         return self.create_subtask(name)
@@ -201,6 +304,7 @@ class Project(Container):
         task = Task(name, path=os.path.join(self.path, 'tasks', name))
         task.create()
         task.add_metadata('name', name)
+        task.add_metadata('create_time', int(time.time()))
         task.add_metadata('identifier', '{}/{}'.format(
             self.metadata['identifier'], name))
         self.append_metadata_item('tasks', name)
@@ -238,6 +342,8 @@ class Project(Container):
 
 
 class Database(Container):
+    # TODO: rewrite api
+    # TODO: combine similar api funcs (e.g., insert_task_config, insert_task_result)
     def __init__(self, path: str = DEFAULT_DB_PATH):
         super().__init__()
 
@@ -250,16 +356,28 @@ class Database(Container):
             self.initialize_database()
 
         self.ops = {
-            'create_project': (self.create_project,
-                               [('name', str, None)]),
-            'delete_project': (self.delete_project,
-                               [('name', str, None)]),
-            'list_projects': (self.list_projects,
-                              [('info', boolean, False)]),
+            'create_project': (self.create_project, [('name', str, None)]),
+            'delete_project': (self.delete_project, [('name', str, None)]),
+            'list_projects': (self.list_projects, [('info', boolean, False)]),
             'list_children': (self.list_children,
                               [('parent', str, None), ('info', boolean, False)]),
             'create_task': (self.create_task,
                             [('parent', str, None), ('name', str, None)]),
+            'insert_task_result': (self.insert_task_result,
+                                   [('parent', str, None), ('key', str, None),
+                                    ('value', str, None), ('val_type', str, None)]),
+            'delete_task_result': (self.delete_task_result,
+                                   [('parent', str, None), ('key', str, None)]),
+            'insert_task_config': (self.insert_task_config,
+                                   [('parent', str, None), ('key', str, None),
+                                    ('value', str, None),
+                                    ('val_type', str, None)]),
+            'delete_task_config': (self.delete_task_config,
+                                   [('parent', str, None), ('key', str, None)]),
+            'append_task_result': (self.append_task_result,
+                                   [('parent', str, None), ('key', str, None),
+                                    ('value', str, None),
+                                    ('val_type', str, None)])
         }
 
     def initialize_database(self):
@@ -337,6 +455,29 @@ class Database(Container):
     def create_task(self, parent: str, name: str):
         parent = self.get_child(parent)
         parent.create_child(name)
+
+    def insert_task_result(self, parent: str, key: str, value: str,
+                           val_type: str):
+        parent = self.get_child(parent)
+        parent.insert_result(key, value, val_type)
+
+    def delete_task_result(self, parent: str, key: str):
+        parent = self.get_child(parent)
+        parent.delete_result(key)
+
+    def append_task_result(self, parent: str, key: str, value: str,
+                           val_type: str):
+        parent = self.get_child(parent)
+        parent.append_result(key, value, val_type)
+
+    def insert_task_config(self, parent: str, key: str, value: str,
+                           val_type: str):
+        parent = self.get_child(parent)
+        parent.insert_config(key, value, val_type)
+
+    def delete_task_config(self, parent: str, key: str):
+        parent = self.get_child(parent)
+        parent.delete_config(key)
 
     def api(self, op, args):
         try:

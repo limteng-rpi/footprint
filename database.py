@@ -86,6 +86,7 @@ class Dict(object):
         self.allowed_types = {}
         self.formatters = {}
         self.dictionary = {}
+        self.load()
 
     def load(self):
         if os.path.exists(self.path):

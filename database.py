@@ -125,8 +125,8 @@ class Result(Dict):
             'list': lambda x: json.loads(x),
             'json': lambda x: json.loads(x),
             'html': lambda x: x,
-            'table': lambda x: json.dumps({'cols': json.loads(x), 'data': []}),
-            'plot2d': lambda x: json.dumps({'series': json.loads(x), 'data': []})
+            'table': lambda x: {'cols': json.loads(x), 'data': []},
+            'plot2d': lambda x: {'series': json.loads(x), 'data': []}
         }
 
     def table_formatter(self, value: str):

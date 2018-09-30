@@ -60,6 +60,10 @@
     background: #eee;
 }
 
+#tv-result {
+    padding: 5px;
+}
+
 #tv-result-list {
     list-style: none;
     padding: 0;
@@ -71,6 +75,7 @@ li.tv-result-li table {
     border-collapse: collapse;
     width: 100%;
     text-align: right;
+    font-size: 12px;
 }
 
 li.tv-result-li table th,

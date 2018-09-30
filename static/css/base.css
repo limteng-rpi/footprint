@@ -3,6 +3,15 @@ body, html {
     min-width: 800px;
 }
 
+* {
+    box-sizing: border-box;
+}
+
+a, a:hover, a:active, a:visited, a:link {
+    text-decoration: inherit;
+    color: inherit;
+}
+
 .ellipsis {
     white-space: nowrap;
     overflow: hidden;
@@ -35,6 +44,20 @@ button.trans.gray:hover {
 button.trans.gray:active {
     color: #323232;
     background-color: rgba(50, 50, 50, .08);
+}
+
+button.trans.red {
+    color: rgba(218, 20, 10, .8);
+}
+
+button.trans.red:hover {
+    color: #da140a;;
+    background-color: rgba(218, 20, 10, .05);
+}
+
+button.trans.red:active {
+    color: #da140a;;
+    background-color: rgba(218, 20, 10, .08);
 }
 
 button.outline {

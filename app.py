@@ -1,8 +1,11 @@
 import os
+import time
 import logging
+
 from flask import Flask, request, jsonify, render_template
 from argparse import ArgumentParser
 from database import Database, Project, Task, Config, Result
+from utils import format_time
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
@@ -45,6 +48,20 @@ def setting():
 @app.route('/projects')
 def projects():
     return render_template('proj_view.html')
+
+@app.route('/task/<path:identifier>')
+def task(identifier):
+    try:
+        task = db.get_child(identifier)
+        metadata = task.metadata
+        metadata = {
+            'name': metadata.get('name'),
+            'desc': metadata.get('desc', ''),
+            'create_time': format_time(metadata.get('create_time', ''))
+        }
+        return render_template('task_view.html', metadata=metadata)
+    except Exception:
+        return render_template('task_view.html')
 
 
 @app.route('/api/<op>', methods=['GET', 'POST'])

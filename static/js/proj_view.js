@@ -70,7 +70,12 @@ function update_project_list(projs) {
             var task_li = $('<li></li>')
                 .addClass('proj-tasks-item')
                 .attr('status', task.status);
-            task_li.append($('<span class="proj-tasks-name"></span>').text(task.name));
+            task_li.append($('<a class="proj-tasks-name"></a>')
+                .text(task.name)
+                .attr('identifier', task.identifier)
+                .attr('href', '/task/' + task.identifier)
+                .attr('target', '_blank')
+            );
             proj_tasks_list.append(task_li);
         });
         proj_tasks.append(proj_tasks_ops, proj_tasks_list);

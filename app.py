@@ -57,7 +57,8 @@ def task(identifier):
         metadata = {
             'name': metadata.get('name'),
             'desc': metadata.get('desc', ''),
-            'create_time': format_time(metadata.get('create_time', ''))
+            'create_time': format_time(metadata.get('create_time', '')),
+            'status': metadata.get('status', '')
         }
         return render_template('task_view.html', metadata=metadata)
     except Exception:

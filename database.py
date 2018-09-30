@@ -388,7 +388,9 @@ class Database(Container):
                                     ('val_type', str, None)]),
             'update_child_metadata': (self.update_child_metadata,
                                       [('identifier', str, None),
-                                       ('metadata', str, None)])
+                                       ('metadata', str, None)]),
+            'get_task_configs': (self.get_task_configs, [('identifier', str, None)]),
+            'get_task_results': (self.get_task_results, [('identifier', str, None)]),
         }
 
     def initialize_database(self):
@@ -490,6 +492,10 @@ class Database(Container):
         node = self.get_child(identifier)
         node.append_result(key, value, val_type)
 
+    def get_task_results(self, identifier: str):
+        node = self.get_child(identifier)
+        return node.get_result()
+
     def insert_task_config(self, identifier: str, key: str, value: str,
                            val_type: str):
         node = self.get_child(identifier)
@@ -498,6 +504,10 @@ class Database(Container):
     def delete_task_config(self, identifier: str, key: str):
         node = self.get_child(identifier)
         node.delete_config(key)
+
+    def get_task_configs(self, identifier: str):
+        node = self.get_child(identifier)
+        return node.get_config()
 
     def update_child_metadata(self, identifier: str, metadata: str):
         node = self.get_child(identifier)

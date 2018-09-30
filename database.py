@@ -500,11 +500,11 @@ class Database(Container):
 
     def update_child_metadata(self, identifier: str, metadata: str):
         node = self.get_child(identifier)
-        for k, v in json.loads(metadata):
+        for k, v in json.loads(metadata).items():
             node.add_metadata(k, v)
 
     def update_metadata(self, metadata):
-        for k, v in json.loads(metadata):
+        for k, v in json.loads(metadata).items():
             self.add_metadata(k, v)
 
     def api(self, op, args):

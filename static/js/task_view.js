@@ -23,7 +23,8 @@ function retrieve_config() {
 }
 
 function _handle_table_result(key, val) {
-    var table = $('<li class="tv-result-li"><table></table></li>');
+    var li = $('<li class="tv-result-li"></li>');
+    var table = $('<table></table>');
     var thead = $('<thead><tr></tr></thead>');
     $.each(val.cols, function (i, col) {
         thead.append($('<th></th>').text(col));
@@ -41,7 +42,8 @@ function _handle_table_result(key, val) {
     });
 
     table.append(thead, tbody);
-    $('ul#tv-result-list').append(table);
+    li.append(table);
+    $('ul#tv-result-list').append(li);
 }
 
 function retrieve_result() {

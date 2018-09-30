@@ -5,9 +5,30 @@ body, html {
 
 /* BUTTONS */
 button.trans {
+    padding: 12px 12px;
     border: 0;
     background-color: transparent;
     outline: none;
+    color: rgba(129, 20, 171, .7);
+    cursor: pointer;
+}
+
+button.trans:hover {
+    color: #8114ab;
+}
+
+button.trans.gray {
+    color: rgba(50, 50, 50, .8);
+}
+
+button.trans.gray:hover {
+    color: #323232;
+    background-color: rgba(50, 50, 50, .05);
+}
+
+button.trans.gray:active {
+    color: #323232;
+    background-color: rgba(50, 50, 50, .08);
 }
 
 button.outline {
@@ -20,7 +41,7 @@ button.outline {
 }
 
 button.outline:hover {
-    border-color: #8114ab;
+    border-color: rgba(129, 20, 171, .7);
     color: #8114ab;
 }
 
@@ -29,7 +50,7 @@ button.outline.red {
 }
 
 button.outline.red:hover {
-    border-color: rgb(218, 20, 10);
+    border-color: rgba(218, 20, 10, .7);
     color: rgb(218, 20, 10);
 }
 

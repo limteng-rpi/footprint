@@ -3,7 +3,8 @@
 {% block title %}Footprint{% endblock %}
 {% block header %}
     {{ super() }}
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/proj_view.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/proj_view.css') }}"/>
+    <script src="{{ url_for('static', filename='js/proj_view.js') }}"></script>
 
 {% endblock %}
 
@@ -11,7 +12,14 @@
     {{ super() }}
     <div id="pv-wrapper">
         <div id="pv">
-            <div id="pv-toolbar"></div>
+            <div id="pv-toolbar">
+                <div id="pv-t-left">
+                    <button class="trans gray"><i class="fas fa-plus"></i> New Project</button>
+                    <button class="trans gray"><i class="far fa-circle"></i> Show Archived</button>
+                </div>
+                <div id="pv-t-right">
+                </div>
+            </div>
             <div id="pv-list">
                 <ul id="proj-list">
                     <li class="proj-li">
@@ -24,31 +32,31 @@
                                 <span class="proj-s-fail"><i class="fas fa-circle fa-sm"></i> Failed: <span class="proj-s-fail-num">0</span></span>
                                 <span class="proj-s-done"><i class="fas fa-circle fa-sm"></i> Done: <span class="proj-s-done-num">0</span></span>
                             </div>
-{#                            <div class="proj-ops">#}
-{#                                <button class="trans"><i class="fas fa-plus-circle"></i> Add Task</button>#}
-{#                            </div>#}
+                            <div class="proj-ops">
+                                <button class="trans gray"><i class="far fa-eye-slash"></i> Archive</button>
+                            </div>
                         </div>
                         <div class="proj-tasks">
-                            <div class="proj-ops">
-                                <div class="proj-ops-left">
+                            <div class="proj-tasks-ops">
+                                <div class="proj-tasks-ops-left">
                                     <button class="outline"><i class="fas fa-plus"></i> New Task</button>
                                 </div>
-                                <div class="proj-ops-right">
+                                <div class="proj-tasks-ops-right">
                                     <button class="outline red"><i class="fas fa-trash"></i> Delete Project</button>
                                 </div>
                             </div>
-                            <ul class="pt-list">
-                                <li class="pt-item">
-                                    <span class="pt-name">Task 1</span>
-                                    <span class="pt-desc">Task 1</span>
+                            <ul class="proj-tasks-list">
+                                <li class="proj-tasks-item">
+                                    <span class="proj-tasks-name">Task 1</span>
+                                    <span class="proj-tasks-desc">Task 1</span>
                                 </li>
-                                <li class="pt-item">
-                                    <span class="pt-name">Task 1</span>
-                                    <span class="pt-desc">Task 1</span>
+                                <li class="proj-tasks-item">
+                                    <span class="proj-tasks-name">Task 1</span>
+                                    <span class="pproj-tasks-desc">Task 1</span>
                                 </li>
-                                <li class="pt-item">
-                                    <span class="pt-name">Task 1</span>
-                                    <span class="pt-desc">Task 1</span>
+                                <li class="proj-tasks-item">
+                                    <span class="proj-tasks-name">Task 1</span>
+                                    <span class="proj-tasks-desc">Task 1</span>
                                 </li>
                             </ul>
                         </div>

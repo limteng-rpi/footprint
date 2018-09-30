@@ -15,10 +15,10 @@ root = os.path.dirname(os.path.abspath(__file__))
 # ROOT = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_DB_PATH = os.path.join(root, 'database')
 
-boolean = lambda x : x.lower() == 'true'
+boolean = lambda x : x if type(x) is bool else x.lower() == 'true'
 
 def validate_name(name: str) -> bool:
-    return re.match('^[0-9a-zA-Z_-]{2,50}$', name) is not None
+    return re.match('^[0-9a-zA-Z _-]{2,50}$', name) is not None
 
 
 class Container(object):
@@ -201,6 +201,9 @@ class Task(Container):
         task.add_metadata('identifier', '{}/{}'.format(
             self.metadata['identifier'], name))
         task.add_metadata('create_time', int(time.time()))
+        task.add_metadata('status', 'running')
+        task.add_metadata('subtasks', [])
+        task.add_metadata('desc', '')
         self.append_metadata_item('subtasks', name)
 
     def delete_subtask(self, name: str):
@@ -308,6 +311,9 @@ class Project(Container):
         task.add_metadata('create_time', int(time.time()))
         task.add_metadata('identifier', '{}/{}'.format(
             self.metadata['identifier'], name))
+        task.add_metadata('status', 'running')
+        task.add_metadata('desc', '')
+        task.add_metadata('subtasks', [])
         self.append_metadata_item('tasks', name)
 
     def delete_task(self, name: str):
@@ -416,6 +422,8 @@ class Database(Container):
         proj.add_metadata('name', name)
         proj.add_metadata('identifier', name)
         proj.add_metadata('create_time', int(time.time()))
+        proj.add_metadata('tasks', [])
+        proj.add_metadata('desc', '')
         self.append_metadata_item('projects', name)
 
     def delete_project(self, name: str):
@@ -434,7 +442,15 @@ class Database(Container):
     def list_projects(self, info: bool = False):
         projs = self.metadata.get('projects', [])
         if info:
-            projs = {self.get_project(proj).metadata for proj in projs}
+            projs = [self.get_project(proj).metadata for proj in projs]
+            projs_ = []
+            for proj in projs:
+                if 'tasks' in proj:
+                    proj['tasks'] = self.list_children(proj['identifier'], info=True)
+                else:
+                    proj['tasks'] = []
+                projs_.append(proj)
+            projs = projs_
         return projs
 
     def list_children(self, parent, info: bool = False):

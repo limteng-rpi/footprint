@@ -26,7 +26,7 @@ function _handle_table_result(key, val) {
     var table = $('<li class="tv-result-li"><table></table></li>');
     var thead = $('<thead><tr></tr></thead>');
     $.each(val.cols, function (i, col) {
-        thead.append($('<td></td>').text(col));
+        thead.append($('<th></th>').text(col));
     });
     var tbody = $('<tbody></tbody>');
     $.each(val.data, function (i, row) {

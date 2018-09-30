@@ -3,6 +3,12 @@ body, html {
     min-width: 800px;
 }
 
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* BUTTONS */
 button.trans {
     padding: 12px 12px;

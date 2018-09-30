@@ -40,7 +40,7 @@ function update_project_list(projs) {
         // Project information
         var proj_info = $('<div></div>').addClass('proj-info');
         var proj_summary = $('<div></div>').addClass('proj-summary');
-        proj_summary.append($('<span class="proj-s-name"></span>').text(name));
+        proj_summary.append($('<span class="proj-s-name ellipsis"></span>').text(name));
         proj_summary.append($('<span class="proj-s-task"></span>').text('Task: ' + task_num));
         proj_summary.append($('<span class="proj-s-run"></span>').html('<i class="fas fa-circle fa-sm"></i> Running: ' + run_num));
         proj_summary.append($('<span class="proj-s-fail"></span>').html('<i class="fas fa-circle fa-sm"></i> Failed: ' + fail_num));

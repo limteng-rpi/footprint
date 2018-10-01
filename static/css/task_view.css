@@ -74,7 +74,7 @@ li.tv-result-li table {
     border: 1px solid #eee;
     border-collapse: collapse;
     width: 100%;
-    text-align: right;
+    text-align: center;
     font-size: 12px;
 }
 
@@ -86,7 +86,6 @@ li.tv-result-li table td {
 li.tv-result-li table thead th {
     background-color: #eee;
     font-weight: 500;
-    text-align: center;
 }
 
 li.tv-result-li table tr:nth-child(even) {

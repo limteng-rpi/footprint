@@ -18,6 +18,22 @@ a, a:hover, a:active, a:visited, a:link {
     text-overflow: ellipsis;
 }
 
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.monospace {
+    font-family: 'Menlo', monospace;
+}
+
 /* BUTTONS */
 button.trans {
     padding: 12px 12px;

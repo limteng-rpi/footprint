@@ -8,8 +8,10 @@
 #tv {
     position: relative;
     border: 1px solid #e2e2e2;
-    height: 600px;
+    padding: 10px;
+    min-height: 600px;
     width: 100%;
+    margin-bottom: 20px;
 }
 
 #tv-toolbar {
@@ -18,6 +20,8 @@
     flex-direction: row;
     /*padding: 0 5px;*/
     /*height: 35px;*/
+    left: 0;
+    top: 0;
     width: 100%;
     font-size: 12px;
     background-color: rgba(0,0,0,.05);
@@ -31,7 +35,40 @@
 
 #tv-metadata {
     margin-top: 40px;
-    padding: 5px;
+    /*padding: 5px;*/
+}
+
+#tv-metadata, #tv-result, #tv-config {
+    position: relative;
+    margin-bottom: 10px;
+    /*padding-top: 30px;*/
+}
+
+#tv-result-title, #tv-config-title {
+    position: relative;
+    background-color: rgba(0, 0, 0, .1);
+    border-bottom: 1px solid #eee;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+}
+
+#tv-result-list-wrapper, #tv-config-list-wrapper {
+    padding: 10px;
+}
+
+.tv-result-cap {
+    border: 1px solid #e2e2e2;
+    padding: 10px;
+    width: 100%;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
 }
 
 #tv-metadata-table {
@@ -61,7 +98,8 @@
 }
 
 #tv-result {
-    padding: 5px;
+    /*padding: 5px;*/
+    border: 1px solid #eee;
 }
 
 #tv-result-list {
@@ -71,16 +109,18 @@
 }
 
 li.tv-result-li table {
-    border: 1px solid #eee;
+    border: 1px solid #e2e2e2;
     border-collapse: collapse;
     width: 100%;
     text-align: center;
     font-size: 12px;
+    margin-bottom: 10px;
 }
 
 li.tv-result-li table th,
 li.tv-result-li table td {
     padding: 8px 10px;
+    border-right: 1px solid #e2e2e2;
 }
 
 li.tv-result-li table thead th {

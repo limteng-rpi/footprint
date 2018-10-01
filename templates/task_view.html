@@ -42,6 +42,13 @@
                     </tbody>
                 </table>
             </div>
+            <div id="tv-substaks">
+                <ul id="tv-subtasks-list">
+                    {% for subtask in metadata.subtasks %}
+                        <li>{{ subtask }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
             <div id="tv-config">
                 <table id="tv-config-table"></table>
             </div>

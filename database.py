@@ -95,11 +95,12 @@ class Dict(object):
     def save(self):
         json.dump(self.dictionary, open(self.path, 'w', encoding='utf-8'))
 
-    def insert(self, key, value, val_type='str'):
+    def insert(self, key, value, val_type='str', overwrite: bool = False):
         if val_type not in self.allowed_types:
             raise ValueError('Unknown value type: {}'.format(val_type))
         value = self.formatters[val_type](value)
-        self.dictionary[key] = {'value': value, 'type': val_type}
+        if key not in self.dictionary or overwrite:
+            self.dictionary[key] = {'value': value, 'type': val_type}
         self.save()
 
     def delete(self, key):
@@ -220,9 +221,10 @@ class Task(Container):
         else:
             raise ValueError('Subtask {} does not exists'.format(name))
 
-    def insert_result(self, key: str, value: str, val_type: str):
+    def insert_result(self, key: str, value: str, val_type: str,
+                      overwrite: bool = False):
         result = Result(self.result_path)
-        result.insert(key, value, val_type)
+        result.insert(key, value, val_type, overwrite)
 
     def delete_result(self, key: str):
         result = Result(self.result_path)
@@ -239,9 +241,10 @@ class Task(Container):
     def get_result(self):
         return Result(self.result_path).dictionary
 
-    def insert_config(self, key: str, value: str, val_type: str):
+    def insert_config(self, key: str, value: str, val_type: str,
+                      overwrite: bool = False):
         config = Config(self.config_path)
-        config.insert(key, value, val_type)
+        config.insert(key, value, val_type, overwrite)
 
     def delete_config(self, key: str):
         config = Config(self.config_path)
@@ -373,13 +376,14 @@ class Database(Container):
                             [('parent', str, None), ('name', str, None)]),
             'insert_task_result': (self.insert_task_result,
                                    [('identifier', str, None), ('key', str, None),
-                                    ('value', str, None), ('val_type', str, None)]),
+                                    ('value', str, None), ('val_type', str, None),
+                                    ('overwrite', boolean, False)]),
             'delete_task_result': (self.delete_task_result,
                                    [('identifier', str, None), ('key', str, None)]),
             'insert_task_config': (self.insert_task_config,
                                    [('identifier', str, None), ('key', str, None),
-                                    ('value', str, None),
-                                    ('val_type', str, None)]),
+                                    ('value', str, None), ('val_type', str, None),
+                                    ('overwrite', boolean, False)]),
             'delete_task_config': (self.delete_task_config,
                                    [('identifier', str, None), ('key', str, None)]),
             'append_task_result': (self.append_task_result,
@@ -479,9 +483,9 @@ class Database(Container):
         parent.create_child(name)
 
     def insert_task_result(self, identifier: str, key: str, value: str,
-                           val_type: str):
+                           val_type: str, overwrite: bool = False):
         node = self.get_child(identifier)
-        node.insert_result(key, value, val_type)
+        node.insert_result(key, value, val_type, overwrite)
 
     def delete_task_result(self, identifier: str, key: str):
         node = self.get_child(identifier)
@@ -497,9 +501,9 @@ class Database(Container):
         return node.get_result()
 
     def insert_task_config(self, identifier: str, key: str, value: str,
-                           val_type: str):
+                           val_type: str, overwrite: bool = False):
         node = self.get_child(identifier)
-        node.insert_config(key, value, val_type)
+        node.insert_config(key, value, val_type, overwrite)
 
     def delete_task_config(self, identifier: str, key: str):
         node = self.get_child(identifier)

@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}"/>
+    <script src="{{ url_for('static', filename='js/base.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -21,5 +22,17 @@
             </nav>
         </div>
         <div id="doc">{% block doc %}{% endblock %}</div>
+    </div>
+    <div id="popup">
+        <div id="popup-panel">
+            <div id="popup-title"></div>
+            <div id="popup-content">
+                <div id="popup-text">Are you sure you want to ...</div>
+                <div id="popup-btns">
+                    <button id="popup-cancel-btn" class="outline gray">Cancel</button>
+                    <button id="popup-confirm-btn" class="outline blue">Confirm</button>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

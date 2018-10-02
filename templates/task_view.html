@@ -17,7 +17,7 @@
 {#                    <span id="tv-toolbar-name">{{ metadata.name }}</span>#}
                 </div>
                 <div id="tv-t-right">
-                    <button class="trans red"><i class="far fa-circle"></i> Delete Task</button>
+                    <button id="tv-delete-task-button" class="trans red"><i class="far fa-circle"></i> Delete Task</button>
                 </div>
             </div>
             <div id="tv-metadata">
@@ -43,15 +43,15 @@
                 </table>
             </div>
             <div id="tv-substaks">
-                <ul id="tv-subtasks-list">
-                    {% for subtask in metadata.subtasks %}
-                        <li>{{ subtask }}</li>
-                    {% endfor %}
-                </ul>
+                <div id="tv-subtasks-title"><i class="fas fa-sitemap"></i> Subtasks</div>
+                <ul id="tv-subtasks-list"></ul>
             </div>
             <div id="tv-config">
                 <div id="tv-config-title"><i class="fas fa-sliders-h"></i> Task Configuration</div>
-                <table id="tv-config-table"></table>
+                <div id="tv-config-list-wrapper">
+                    <table id="tv-config-table">
+                    </table>
+                </div>
             </div>
             <div id="tv-result">
                 <div id="tv-result-title"><i class="fas fa-chart-bar"></i> Task Results</div>

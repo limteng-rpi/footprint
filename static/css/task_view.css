@@ -1,3 +1,8 @@
+pre {
+    margin: 0;
+    font-size: 11px;
+}
+
 #tv-wrapper {
     position: relative;
     padding: 10px 40px;
@@ -38,13 +43,13 @@
     /*padding: 5px;*/
 }
 
-#tv-metadata, #tv-result, #tv-config {
+#tv-metadata, #tv-result, #tv-config, #tv-substaks {
     position: relative;
     margin-bottom: 10px;
     /*padding-top: 30px;*/
 }
 
-#tv-result-title, #tv-config-title {
+#tv-result-title, #tv-config-title, #tv-subtasks-title {
     position: relative;
     background-color: rgba(0, 0, 0, .1);
     border-bottom: 1px solid #eee;
@@ -58,7 +63,7 @@
     color: #555;
 }
 
-#tv-result-list-wrapper, #tv-config-list-wrapper {
+#tv-result-list-wrapper, #tv-config-list-wrapper, #tv-subtasks-list-wrapper {
     padding: 10px;
 }
 
@@ -71,7 +76,9 @@
     text-align: center;
 }
 
-#tv-metadata-table {
+#tv-metadata-table,
+#tv-config-table
+{
     border: 1px solid #eee;
     width: 100%;
     border-collapse: collapse;
@@ -79,27 +86,82 @@
     color: #333;
 }
 
-#tv-metadata-table td {
+#tv-metadata-table td,
+#tv-config-table td
+{
     /*border: 1px solid #eee;*/
     padding: 8px 10px;
+    vertical-align: top;
 }
 
-#tv-metadata-table td:first-child {
+#tv-metadata-table td:first-child,
+#tv-config-table td:first-child
+{
     font-weight: 500;
 }
 
-#tv-metadata-table tr:nth-child(even) {
+#tv-metadata-table tr:nth-child(even),
+#tv-config-table tr:nth-child(even)
+{
     background: #f2f2f2;
 }
 
-#tv-metadata-table tr:hover {
+#tv-metadata-table tr:hover,
+#tv-config-table tr:hover
+{
     color: #000;
     background: #eee;
 }
 
-#tv-result {
+#tv-result, #tv-config, #tv-substaks {
     /*padding: 5px;*/
     border: 1px solid #eee;
+}
+
+#tv-subtasks-list {
+    list-style: none;
+    padding: 5px;
+    margin: 0;
+}
+
+.tv-subtasks-item {
+    border: 1px solid #eee;
+    border-left: 3px solid #ddd;
+    padding: 8px 10px;
+    margin-bottom: 5px;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.tv-subtasks-item:hover {
+    background-color: #f5f5f5;
+}
+
+.tv-subtasks-item:last-child {
+    margin-bottom: 0;
+}
+
+.tv-subtasks-item[status='running'] {
+    border-left: 3px solid #abe28b;
+}
+
+.tv-subtasks-item[status='failed'] {
+    border-left: 3px solid #ff8d8d;
+}
+
+.tv-subtasks-item[status='done'] {
+    border-left: 3px solid #95cadc;
+}
+
+.tv-subtasks-item .tv-subtasks-name,
+.tv-subtasks-item .tv-subtasks-desc
+{
+    display: inline-block;
+}
+
+.tv-subtasks-item .tv-subtasks-name {
+    width: 150px;
+    font-weight: 600;
 }
 
 #tv-result-list {

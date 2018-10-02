@@ -2,25 +2,16 @@
  * Author: Ying Lin
  * Date: Sep 30, 2018
  */
-
 var _identifier = decodeURIComponent(window.location.pathname.substring(6));
 console.log(_identifier);
 
 $(document).ready(function () {
+    retrieve_subtasks();
     retrieve_config();
     retrieve_result();
-});
-
-function retrieve_config() {
-    $.post({
-        'url': '/api/get_task_configs',
-        'data': {identifier: _identifier},
-        'success': function (data) {
-            var config = data.data;
-            console.log(config);
-        }
-    })
-}
+})
+    .on('click', '#tv-delete-task-button', delete_button_click)
+;
 
 function _handle_table_result(key, val) {
     var li = $('<li class="tv-result-li"></li>');
@@ -88,7 +79,6 @@ function retrieve_result() {
         'data': {identifier: _identifier},
         'success': function (data) {
             var result = data.data;
-            // console.log(result);
             var primitive_vals = [];
             $.each(result, function (rst_key, rst) {
                 var rst_type = rst.type;
@@ -108,4 +98,79 @@ function retrieve_result() {
             _handle_primitive_result(primitive_vals);
         }
     });
+}
+
+function _handle_primitive_config(key, value) {
+    var tr = $('<tr></tr>');
+    tr.append($('<td width="150"></td>').text(key));
+    tr.append($('<td></td>').text(value));
+    $('#tv-config-table').append(tr);
+}
+
+function _handle_json_config(key, value) {
+    var tr = $('<tr></tr>');
+    tr.append($('<td width="150"></td>').text(key));
+    tr.append($('<td></td>').html("<pre>" + JSON.stringify(value, undefined, 4) + "</pre>"));
+    $('#tv-config-table').append(tr);
+}
+
+function retrieve_config() {
+    $.post({
+        'url': '/api/get_task_configs',
+        'data': {identifier: _identifier},
+        'success': function (data) {
+            var config = data.data;
+            $.each(config, function (conf_key, conf) {
+                var conf_type = conf.type;
+                var conf_val = conf.value;
+                switch (conf_type) {
+                    case 'int': case 'float': case 'str': case 'file':
+                        _handle_primitive_config(conf_key, conf_val);
+                        break;
+                    case 'json':
+                        _handle_json_config(conf_key, conf_val);
+                        break;
+                }
+            })
+        }
+    });
+}
+
+function retrieve_subtasks() {
+    var subtask_list = $('ul#tv-subtasks-list');
+    $.post({
+        'url': '/api/list_children',
+        'data': {parent: _identifier, info: true},
+        'success': function (data) {
+            var subtasks = data.data;
+            $.each(subtasks, function (i, subtask) {
+                var name = subtask.name;
+                var status = subtask.status;
+                var id = subtask.identifier;
+                var desc = subtask.desc;
+                var task_li = $('<li></li>')
+                    .addClass('tv-subtasks-item')
+                    .attr('status', status);
+                task_li.append($('<a class="tv-subtasks-name"></a>')
+                    .text(name)
+                    .attr('identifier', id)
+                    .attr('href', '/task/' + id)
+                    .attr('target', '_blank')
+                );
+                task_li.append($('<span class="tv-subtasks-desc"></span>')
+                    .text(desc)
+                );
+                subtask_list.append(task_li);
+            })
+        }
+    });
+}
+
+function delete_button_click() {
+    popup(
+        'Are you sure you want to delete this task? The operation can not be undone.',
+        function () {
+            return false;
+        }
+    )
 }

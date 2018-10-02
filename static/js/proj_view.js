@@ -65,7 +65,7 @@ function update_project_list(projs) {
         proj_tasks_ops_right.append(del_proj_btn);
         proj_tasks_ops.append(proj_tasks_ops_left, proj_tasks_ops_right);
 
-        proj_tasks_list = $('<ul></ul>').addClass('proj-tasks-list').attr('proj', identifier);
+        var proj_tasks_list = $('<ul></ul>').addClass('proj-tasks-list').attr('proj', identifier);
         $.each(proj.tasks, function (ti, task) {
             var task_li = $('<li></li>')
                 .addClass('proj-tasks-item')

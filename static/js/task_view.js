@@ -170,6 +170,13 @@ function delete_button_click() {
     popup(
         'Are you sure you want to delete this task? The operation can not be undone.',
         function () {
+            $.post({
+                url: '/api/delete_task',
+                data: {identifier: _identifier},
+                success: function () {
+                    window.location.replace('/projects');
+                }
+            });
             return false;
         }
     )

@@ -261,7 +261,7 @@ class Task(Container):
         return self.create_subtask(name)
 
     def delete_child(self, name: str):
-        return self.delete_child(name)
+        return self.delete_subtask(name)
 
     def has_child(self, name: str):
         return self.has_subtask(name)
@@ -340,7 +340,7 @@ class Project(Container):
         return self.create_task(name)
 
     def delete_child(self, name: str):
-        return self.delete_child(name)
+        return self.delete_task(name)
 
     def get_child(self, name: str):
         return self.get_task(name)
@@ -395,6 +395,7 @@ class Database(Container):
                                        ('metadata', str, None)]),
             'get_task_configs': (self.get_task_configs, [('identifier', str, None)]),
             'get_task_results': (self.get_task_results, [('identifier', str, None)]),
+            'delete_task': (self.delete_task, [('identifier', str, None)])
         }
 
     def initialize_database(self):
@@ -499,6 +500,10 @@ class Database(Container):
     def get_task_results(self, identifier: str):
         node = self.get_child(identifier)
         return node.get_result()
+
+    def delete_task(self, identifier: str):
+        parent = self.get_child(identifier[:identifier.rfind('/')])
+        parent.delete_child(identifier[identifier.rfind('/') + 1:])
 
     def insert_task_config(self, identifier: str, key: str, value: str,
                            val_type: str, overwrite: bool = False):

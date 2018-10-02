@@ -9,6 +9,7 @@ function popup_cancel_btn_click() {
     $('#popup-confirm-btn').unbind();
 }
 
+// TODO: add popup options
 function popup(text, confirm_func) {
     $('#popup-text').text(text);
     $('#popup').show();

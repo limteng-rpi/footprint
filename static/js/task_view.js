@@ -35,7 +35,7 @@ function _handle_table_result(key, val) {
 
     table.append(thead, tbody);
     li.append(table_cap, table);
-    $('ul#tv-result-list').append(li);
+    $('ul#tv-result-list').prepend(li);
 }
 
 function _handle_primitive_result(rsts) {
@@ -89,7 +89,7 @@ function retrieve_result() {
                         _handle_table_result(rst_key, rst_val);
                         break;
                     case 'int': case 'float': case 'str': case 'file': case 'list':
-                        primitive_vals.push({key: rst_key, value: rst_val, type: rst_type})
+                        primitive_vals.push({key: rst_key, value: rst_val, type: rst_type});
                         break;
                     default:
                         break;
@@ -103,7 +103,7 @@ function retrieve_result() {
 function _handle_primitive_config(key, value) {
     var tr = $('<tr></tr>');
     tr.append($('<td width="150"></td>').text(key));
-    tr.append($('<td></td>').text(value));
+    tr.append($('<td></td>').text(value)).addClass('monospace');
     $('#tv-config-table').append(tr);
 }
 

@@ -35,7 +35,7 @@ function _handle_table_result(key, val) {
 
     table.append(thead, tbody);
     li.append(table_cap, table);
-    $('ul#tv-result-list').prepend(li);
+    $('ul#tv-result-list').append(li);
 }
 
 function _handle_primitive_result(rsts) {
@@ -70,7 +70,7 @@ function _handle_primitive_result(rsts) {
     });
     table.append(tbody);
     li.append(table);
-    $('ul#tv-result-list').append(li);
+    $('ul#tv-result-list').prepend(li);
 }
 
 function retrieve_result() {

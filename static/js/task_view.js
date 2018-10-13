@@ -103,7 +103,7 @@ function retrieve_result() {
 function _handle_primitive_config(key, value) {
     var tr = $('<tr></tr>');
     tr.append($('<td width="150"></td>').text(key));
-    tr.append($('<td></td>').text(value)).addClass('monospace');
+    tr.append($('<td></td>').text(value).addClass('monospace'));
     $('#tv-config-table').append(tr);
 }
 

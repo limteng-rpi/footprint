@@ -124,7 +124,7 @@ function archive_btn_click() {
 
 function show_archieved_btn_click() {
     var btn = $(this);
-    btn.first('i').toggleClass('fa-circle').toggleClass('fa-check-circle');
+    btn.children('i').toggleClass('fa-circle').toggleClass('fa-check-circle');
     $('.proj-li').toggleClass('show');
 }
 

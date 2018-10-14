@@ -106,6 +106,7 @@
 }
 
 .proj-tasks {
+    display: none;
     margin-top: 5px;
     border: 1px solid #eee;
     border-radius: 2px;

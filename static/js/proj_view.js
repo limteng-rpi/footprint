@@ -114,7 +114,7 @@ function archive_btn_click() {
     var identifier = btn.attr('identifier');
     $.post({
         'url': '/api/update_child_metadata',
-        'data': {identifier: identifier, metadata: {archived: true}},
+        'data': {identifier: identifier, metadata: JSON.stringify({archived: true})},
         'success': function () {
             popup('Project archived');
             retrieve_project_list()

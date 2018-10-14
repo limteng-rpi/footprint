@@ -45,7 +45,7 @@ function update_project_list(projs) {
 
         var proj_li = $('<li></li>')
             .addClass('proj-li');
-        if (archive) proj_li.addClass('archived');
+        if (archived) proj_li.addClass('archived');
         // Project information
         var proj_info = $('<div></div>').addClass('proj-info');
         var proj_summary = $('<div></div>').addClass('proj-summary');

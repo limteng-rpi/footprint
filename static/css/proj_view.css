@@ -50,6 +50,14 @@
     border-left: 2px solid transparent;
 }
 
+.proj-li.archived {
+    display: none;
+}
+
+.proj-li.archived.show {
+    display: block;
+}
+
 .proj-li:hover {
     border-left: 2px solid #eee;
 }

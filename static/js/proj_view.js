@@ -8,7 +8,10 @@
 $(document).ready(function () {
     retrieve_project_list();
 })
-    .on('click', '.proj-s-name', proj_title_click);
+    .on('click', '.proj-s-name', proj_title_click)
+    .on('click', '.archive_btn', archive_btn_click)
+    .on('click', '#show-archived-btn', show_archieved_btn_click)
+;
 
 function update_project_list(projs) {
     var proj_list = $('#proj-list');
@@ -20,7 +23,7 @@ function update_project_list(projs) {
         var run_num = 0;
         var fail_num = 0;
         var done_num = 0;
-        var archive = proj.archive || false;
+        var archived = proj.archived || false;
 
         if (task_num > 0) {
             $.each(proj.tasks, function (ti, task) {
@@ -41,8 +44,8 @@ function update_project_list(projs) {
         }
 
         var proj_li = $('<li></li>')
-            .addClass('proj-li')
-            .attr('archived', archive);
+            .addClass('proj-li');
+        if (archive) proj_li.addClass('archived');
         // Project information
         var proj_info = $('<div></div>').addClass('proj-info');
         var proj_summary = $('<div></div>').addClass('proj-summary');
@@ -55,7 +58,7 @@ function update_project_list(projs) {
         proj_summary.append($('<span class="proj-s-done"></span>').html('<i class="fas fa-circle fa-sm"></i> Done: ' + done_num));
 
         var proj_ops = $('<div></div>').addClass('proj_ops');
-        var proj_arch_btn = $('<button class="trans gray"><i class="far fa-eye-slash"></i> Archive</button>')
+        var proj_arch_btn = $('<button class="trans gray archive_btn"><i class="far fa-eye-slash"></i> Archive</button>')
             .attr('identifier', identifier);
         proj_ops.append(proj_arch_btn);
 
@@ -85,7 +88,7 @@ function update_project_list(projs) {
                 .text(task.name)
                 .attr('identifier', task.identifier)
                 .attr('href', '/task/' + task.identifier)
-                .attr('target', '_blank')
+                // .attr('target', '_blank')
             );
             proj_tasks_list.append(task_li);
         });
@@ -106,9 +109,23 @@ function retrieve_project_list() {
     });
 }
 
+function archive_btn_click() {
+    var btn = $(this);
+    var identifer = btn.attr('identifier');
+    $.post({
+        'url': '/api/update_child_metadata',
+        'data': {identifer: identifer, metadata: {archived: true}},
+        'success': function () {
+            popup('Project archived');
+            retrieve_project_list()
+        }
+    });
+}
+
 function show_archieved_btn_click() {
     var btn = $(this);
-    var i = btn.first('i')
+    btn.first('i').toggleClass('fa-circle').toggleClass('fa-check-circle');
+    $('.proj-li').toggleClass('show');
 }
 
 function proj_title_click() {

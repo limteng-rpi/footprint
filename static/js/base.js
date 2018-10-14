@@ -14,7 +14,7 @@ function popup(text, confirm_func) {
     $('#popup-text').text(text);
     $('#popup').show();
     $('#popup-confirm-btn').click(function () {
-        confirm_func();
+        if (typeof confirm_func !== 'undefined') confirm_func();
         popup_cancel_btn_click();
         return false;
     });

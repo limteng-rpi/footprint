@@ -90,6 +90,10 @@ function update_project_list(projs) {
                 .attr('href', '/task/' + task.identifier)
                 // .attr('target', '_blank')
             );
+            task_li.append($('<span></span>')
+                .addClass('proj-tasks-desc')
+                .text(task.desc)
+            );
             proj_tasks_list.append(task_li);
         });
         proj_tasks.append(proj_tasks_ops, proj_tasks_list);
